@@ -30,7 +30,11 @@ if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 ###########################################################################################################################
-
+#
+#
+#
+#
+#
 ###########################################################################################################################
 
 class Application(QMainWindow):
@@ -64,7 +68,9 @@ class Application(QMainWindow):
 		self.admin = Admin()
 		self.failed = []
 		self.directorypath = "C:\\"
+		#self.directorypath = '/home/yipeng/analysis'
 		self.filedialog = QFileDialog()
+		# print(base_dir_path)
 		self.tempdir_path = Path(base_dir_path + str('\\tmpDir'))
 		os.mkdir('tmpDir')
 		self.setDockOptions(QMainWindow.AnimatedDocks)
@@ -123,8 +129,8 @@ class Application(QMainWindow):
 				self.ind_button[j-1].append(a)
 				self.t_button[i].append(a)
 		
-		for i in range(len(self.ind_button)) :
-			for x in self.ind_button[i]:
+		for i in self.ind_button :
+			for x in i:
 				x.clicked.connect(lambda a, y = x: self.set_initial_widget_button_color(y))
 
 		bmlayout.setSpacing(0)		
@@ -144,66 +150,43 @@ class Application(QMainWindow):
 		grid_layout.addWidget(bmwidget,1,1,15,20)				
 		grid_layout.setSpacing(0)
 		iwidget = QWidget()
+		#iwidget.setFixedHeight(self.h)
 		iwidget.setLayout(grid_layout)
-		self.p_button[0].clicked.connect(lambda: self.patientEditWidget(1, False))
-		self.p_button[1].clicked.connect(lambda: self.patientEditWidget(2, False))
-		self.p_button[2].clicked.connect(lambda: self.patientEditWidget(3, False))
-		self.p_button[3].clicked.connect(lambda: self.patientEditWidget(4, False))
-		self.p_button[4].clicked.connect(lambda: self.patientEditWidget(5, False))
-		self.p_button[5].clicked.connect(lambda: self.patientEditWidget(6, False))
-		self.p_button[6].clicked.connect(lambda: self.patientEditWidget(7, False))
-		self.p_button[7].clicked.connect(lambda: self.patientEditWidget(8, False))
-		self.p_button[8].clicked.connect(lambda: self.patientEditWidget(9, False))
-		self.p_button[9].clicked.connect(lambda: self.patientEditWidget(10, False))
-		self.p_button[10].clicked.connect(lambda: self.patientEditWidget(11, False))
-		self.p_button[11].clicked.connect(lambda: self.patientEditWidget(12, False))													
+		self.p_button[0].clicked.connect(lambda: self.patientEditWidget(1))
+		self.p_button[1].clicked.connect(lambda: self.patientEditWidget(2))
+		self.p_button[2].clicked.connect(lambda: self.patientEditWidget(3))
+		self.p_button[3].clicked.connect(lambda: self.patientEditWidget(4))
+		self.p_button[4].clicked.connect(lambda: self.patientEditWidget(5))
+		self.p_button[5].clicked.connect(lambda: self.patientEditWidget(6))
+		self.p_button[6].clicked.connect(lambda: self.patientEditWidget(7))
+		self.p_button[7].clicked.connect(lambda: self.patientEditWidget(8))
+		self.p_button[8].clicked.connect(lambda: self.patientEditWidget(9))
+		self.p_button[9].clicked.connect(lambda: self.patientEditWidget(10))
+		self.p_button[10].clicked.connect(lambda: self.patientEditWidget(11))
+		self.p_button[11].clicked.connect(lambda: self.patientEditWidget(12))													
 		self.setCentralWidget(iwidget)
 		self.show()
 	
 	def set_initial_widget_button_color(self, a):
-		for i in range(len(self.ind_button)):
-			for x in self.ind_button[i]:
-				if a == x:
-					count = i
-		if a.isChecked():
-			a.setStyleSheet('background-color: #0000ff')
-			self.patientEditWidget(count, True)
-		else:
-			a.setStyleSheet('background-color: #ffffff')
 
-	def set_initial_widget_button_color_row(self, a):
-		if a.isChecked():
-			self.deselect_initial_widget_button_color(a)
-			return 
-		
-		a.setChecked(True)
 		if a.isChecked():
 			a.setStyleSheet('background-color: #0000ff')
 		else:
 			a.setStyleSheet('background-color: #ffffff')
-	
-	def deselect_initial_widget_button_color(self, a):
-		a.setChecked(False)
-		if a.isChecked():
-			a.setStyleSheet('background-color: #0000ff')
-		else:
-			a.setStyleSheet('background-color: #ffffff')
+		# print(a)
 
-	def patientEditWidget(self, pid, single):
+	def patientEditWidget(self, pid):
 		try:
 			self.rightdock.hide()
 		except AttributeError:
 			pass
-		if single == False :
-			for i in self.ind_button[pid-1]:
-				self.set_initial_widget_button_color_row(i)
-
 		self.rightdock = QDockWidget()
 		rightinput = QWidget()
 		rightlayout = QGridLayout()
 		patient = self.patient_list[pid-1]
 		labellist = [QLabel(self.labels[i]) for i in range(len(self.labels))]
 		edits = patient.return_list()
+		#self.editlist = [QLineEdit(self).placeholderText(edits[i]) for i in range(len(edits)-1)]
 		edits1 = QLineEdit(self)
 		edits1.setPlaceholderText(edits[0])
 		edits2 = QLineEdit(self)
@@ -241,6 +224,7 @@ class Application(QMainWindow):
 		placeholder = QWidget()
 		label = QLabel(placeholder)
 		label.setPixmap(QPixmap('Company logo.png'))
+		# label.setScaledContents (True)
 		label.setGeometry(100,100, 1500, 750)
 		self.top_bar()	
 		self.progressbar()				
@@ -254,17 +238,19 @@ class Application(QMainWindow):
 		grid_layout = QGridLayout()
 		self.main_open = QPushButton('&Open', self)
 		self.reset = QPushButton('&New Analysis', self)
-		self.frequency_view_checkbox = QCheckBox("Frequency")
+		#self.main_export = QPushButton('&Export', self)
 		blist = [self.main_open, self.reset]
 		for i in blist:
 			i.setStyleSheet(':enable{background-color: white; color: #2775bf}')
 		grid_layout.addWidget(self.main_open, 0, 0)
 		grid_layout.addWidget(self.reset, 0, 1)
-		grid_layout.addWidget(self.frequency_view_checkbox, 0, 2)
+		#grid_layout.addWidget(self.main_export, 0, 2)
 		self.main_open.clicked.connect(self.open_file)
-		self.reset.clicked.connect(self.reset_program)
+		self.reset.clicked.connect(self.reset_program) #TODO NEED TO ENSURE THE INITIAL WIDGET IS DESTORYED BEFORE RESTART
+		#self.main_export.clicked.connect(self.save_file)
 		self.main_open.setEnabled(True)
 		self.reset.setEnabled(True)
+		#self.main_export.setEnabled(False)
 		placeholder_widget.setLayout(grid_layout)
 		grid_layout.setContentsMargins(0,0,0,0)
 		self.top_bar_dock_widget.setWidget(placeholder_widget)
@@ -279,10 +265,13 @@ class Application(QMainWindow):
 		self.openAction = openAction = QAction('&Open', self)
 		openAction.triggered.connect(self.open_file)
 		saveAction = QAction('&Save', self)
+		#saveAction.triggered.connect(self.save_file)
 		scAction = QAction('&Signifigance Cutoff', self)
 		scAction.triggered.connect(lambda:self.setting_popup(ratio = self.ratios))
 		exitAction = QAction('&Exit', self)
 		exitAction.triggered.connect(qApp.quit)
+		#calcAction = QAction('Calculations', self)
+		#calcAction.triggered.connect(lambda: self.calc_popup(calc = None))
 		aboutAction = QAction('&About', self)
 		aboutAction.triggered.connect(self.about_dev)
 		saveDirectoryAction = QAction('&Save Directory', self)
@@ -296,6 +285,7 @@ class Application(QMainWindow):
 		aboutMenu.addAction(aboutAction)
 		settingsMenu.addAction(scAction)
 		settingsMenu.addAction(saveDirectoryAction)
+		#fileMenu.addAction(adminAction)
 		fileMenu.addAction(exitAction)
 
 
@@ -326,12 +316,20 @@ class Application(QMainWindow):
 		try:
 			self.leftdock.hide()
 		except AttributeError:
-			pass			
+			pass
+		# icon = QLabel()
+		# pixmap = QPixmap('logo.png')
+		# iconwidth = pixmap.size().width()
+		# iconheight = pixmap.size().height() * 0.6
+		# iconpixmap = pixmap.scaled(QSize(iconwidth,iconheight))
+		# icon.setPixmap(iconpixmap)			
 		self.dock_widget = QDockWidget()
 		placeholder_widget = QWidget()
 		vBoxLayout = QVBoxLayout()
 		buttonList, testList, patientWidget = self.leftDockPatient()
+		# testCheckboxList, testWidget = self.leftDockTest()
 		vBoxLayout.addWidget(patientWidget)
+		# vBoxLayout.addWidget(testWidget)
 		placeholder_widget.setLayout(vBoxLayout)
 		self.dock_widget.setWidget(placeholder_widget)
 		self.addDockWidget(Qt.LeftDockWidgetArea,self.dock_widget)
@@ -389,6 +387,10 @@ class Application(QMainWindow):
 		self.cb7 = QCheckBox(labels[6])
 		self.cb8 = QCheckBox(labels[7])
 		self.checkboxtestList = testList = [self.cb1,self.cb2,self.cb3,self.cb4,self.cb5,self.cb6,self.cb7,self.cb8]
+		# while len(failed) != 0:
+		# 	for i in range(len(failed)):
+		# 		self.checkboxtestList[failed[i]].setStyleSheet('color: red')
+		# 	break
 
 		for i in range(0,4):
 			testgrid_layout.addWidget(self.checkboxtestList[i],0,i)
@@ -396,6 +398,7 @@ class Application(QMainWindow):
 		for i in range(4,8):
 			testgrid_layout.addWidget(self.checkboxtestList[i],1,i-4)
 
+		# testList.append(pid)
 		testwidget.setLayout(testgrid_layout)
 
 		widget = QWidget()
@@ -431,6 +434,7 @@ class Application(QMainWindow):
 		for i in range(4,8):
 			grid_layout.addWidget(testList[i],1,i-4)
 
+		# testList.append(pid)
 		widget.setLayout(grid_layout)		
 		return testList, widget
 
@@ -459,6 +463,8 @@ class Application(QMainWindow):
 		
 		widget.setLayout(layout)
 
+		#for i in range(len(tests)):
+		#	tests[i].stateChanged.connect()
 
 		tests.append(pid)
 		layout.setSpacing(0)
@@ -477,6 +483,7 @@ class Application(QMainWindow):
 		except:
 			pass
 		self.setCentralWidget(QLabel("REFRESH"))
+		# print(glist)
 		gwidget = QWidget()
 		uiWidget =  QWidget()
 		layout = QVBoxLayout()
@@ -496,6 +503,7 @@ class Application(QMainWindow):
 		layout.addWidget(gwidget,1)
 		uiWidget.setLayout(layout)
 		uiWidget.setSizePolicy(QSizePolicy.Ignored,QSizePolicy.Ignored)
+		# print(uiWidget)
 		self.setCentralWidget(uiWidget)
 		self.uiWidget = uiWidget
 		self.show()
@@ -514,6 +522,7 @@ class Application(QMainWindow):
 		layout = QVBoxLayout()
 		layout.setSpacing(0)
 		layout.setContentsMargins(0,0,0,0)
+		# canvas = GraphWidget(fig)
 		pixmap = QPixmap(fig)
 		canvas = LabelClickableWidget()
 		canvas.setPixmap(pixmap)
@@ -521,30 +530,11 @@ class Application(QMainWindow):
 		layout.addWidget(canvas)
 		gwidget = QWidget()
 		gwidget.setLayout(layout)
+		#canvas.clicked.connect(lambda: self.graph_popup(fig = fig, size = self.size)) 
 		canvas.clicked.connect(lambda: self.unselect_reaction(identifier,patient))
 		return gwidget
-	
-	def graphwidget_frequency_view(self,frame):
-		# ch1_frame = pd.DataFrame(frame['Ch1 Amplitude'].value_counts())
-		# ch2_frame = pd.DataFrame(frame['Ch2 Amplitude'].value_counts())
-		# ch1_fig = sb.barplot(data = ch1_frame, x = "Ch1 Amplitude", y = "values")
-		# ch2_fig = sb.barplot(data = ch2_frame, x = "Ch2 Amplitude", y = "values")
-		# layout = QVBoxLayout()
-		# layout.setSpacing(0)
-		# layout.setContentsMargins(0,0,0,0)
-		# ch1_pixmap = QPixmap(ch1_fig)
-		# ch2_pixmap = QPixmap(ch2_fig)
-		# canvas1 = FigureCanvas()
-		# canvas1.setPixmap(ch1_pixmap)
-		# canvas2 = FigureCanvas()
-		# canvas2.setPixmap(ch2_pixmap)
-		# layout.addWidget(canvas1)
-		# layout.addWidget(canvas2)
-		# gwidget = QWidget()
-		# gwidget.setLayout(layout)
-		gwidget = QWidget()
-		return gwidget
 
+	#Add ComboBoxes if needed for certain selection
 	def export_dock_widget(self,pid):
 		try: 
 			self.dock.hide()
@@ -620,6 +610,78 @@ class Application(QMainWindow):
 		self.addDockWidget(Qt.RightDockWidgetArea,self.rightdock)		
 		self.show()
 
+
+			####################	
+		# label = ['Analysis Method', 'Ratios', 'Test Results' ,'Results', 'View','Save','Mark as Fail']
+		# labels = self.labels
+		# labels.append('')
+		# patient = self.patient_list[pid-1]
+		# patient_info = patient.return_list()
+		# patient_info.append('')
+		# self.dockwidget = QDockWidget()
+		# vlayoutlist = [QVBoxLayout() for i in range(9)]
+		# vwidgetlist = [QWidget() for i in range(9)]
+		# hlayout = QGridLayout()
+		# for i in range(9):
+		# 	vlayoutlist[i].addWidget(QLabel(self.labels[i]))
+		# 	vlayoutlist[i].addWidget(QLineEdit(patient_info[i]))
+		# for i in range(9):
+		# 	vwidgetlist[i].setLayout(vlayoutlist[i])
+		# for i in range(9):
+		# 	hlayout.addWidget(vwidgetlist[i],i//5,i%5+1)
+
+		# hlayout.setContentsMargins(0,0,50,50)
+		# patient_widget = QWidget()
+		# patient_widget.setLayout(hlayout)
+		# patient_widget.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Expanding)
+
+		# analysisWidget = QWidget()		
+		# analysislayout = QVBoxLayout()
+		# self.radio1 = QRadioButton(label[1])
+		# self.radio2 = QRadioButton(label[2])		
+		# analysislayout.addWidget(QLabel(label[0]))
+		# analysislayout.addWidget(self.radio1)
+		# analysislayout.addWidget(self.radio2)		
+		# analysisWidget.setLayout(analysislayout)
+		# analysisWidget.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Expanding)
+		# button_widget = QWidget()
+		# bglayout = QHBoxLayout()
+		# #Buttons
+		# b1 = QPushButton(label[4])
+		# b1.clicked.connect(self.view)
+		# b2 = QPushButton(label[5])
+		# b2.clicked.connect(lambda: self.save_patient_info(patient))#TODO implement saving in the patient section save_paitient_info?
+
+		# bglayout.addWidget(analysisWidget)		
+		# bglayout.addWidget(b1,Qt.AlignCenter)
+		# bglayout.addWidget(b2,Qt.AlignCenter)
+		# button_widget.setLayout(bglayout)
+		# button_widget.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Expanding)
+		# iconwidth = int(self.w*0.2)
+		# iconheight = int(self.h*0.2)
+		# icon = QLabel()
+		# #icon.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Expanding)
+		# pixmap = QPixmap('bg.png').scaled(iconwidth,iconheight)
+		# icon.setPixmap(pixmap)
+
+		# docklayout = QHBoxLayout()
+		# #bW = QWidget()
+		# #bW.setFixedWidth(self.rightdock.width())
+		# #docklayout.addWidget(bW)
+		# docklayout.addWidget(icon)
+		# docklayout.addWidget(patient_widget)
+		# docklayout.addWidget(button_widget)
+		# widget = QWidget()
+		# #widget.setFixedWidth(self.widget_width - self.rightdock.width())		
+		# widget.setSizePolicy(0,QSizePolicy.Expanding)
+		# widget.setLayout(docklayout)
+
+		# self.dockwidget.setWidget(widget)
+		# self.dockwidget.setFeatures(QDockWidget.NoDockWidgetFeatures)
+		# self.dockwidget.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Minimum)
+		# self.addDockWidget(Qt.BottomDockWidgetArea,self.dockwidget)
+		# self.show()
+
 	def reset_program(self):
 		try:
 			self.removeDockWidget(self.leftdock)
@@ -674,6 +736,8 @@ class Application(QMainWindow):
 			self.graph_widget_list12[identifier].hide()
 
 			
+		# checkboxlist = [self.p1,self.p2,self.p3,self.p4,self.p5,self.p6,self.p7,self.p8,self.p9,self.p10,self.p11,self.p12]
+		# checkboxlist[patient].tests[1][identifier].setChecked(False)
 
 ###########################################################################################################################
 #															Work Functions
@@ -703,6 +767,8 @@ class Application(QMainWindow):
 		static_id_list = self.static_list_file_pattern()
 		for i in selected_patients:
 			selected_patients_regx_list.append(static_id_list[i])
+		print("******selected_patients_regx_list******")
+		print(selected_patients_regx_list)
 		QCoreApplication.processEvents()
 		self.patientname = []
 		for i in range(12):
@@ -715,12 +781,16 @@ class Application(QMainWindow):
 				self.work_fullframe = self.fullframe(framelist = self.fl)
 			except:
 				pass				
+			#self.work_failed_list = self.run_through_frames(self.fl)
+			#self.failed = self.failure_detection(faillist = self.work_failed_list, staticlist = self.work_id_list)
 			self.qprogressbar.setValue(100)		
-			self.dict = self.dictionary(framelist = self.fl, staticlist = selected_patients_regx_list) 
+			self.dict = self.dictionary(framelist = self.fl, staticlist = selected_patients_regx_list) #TODO edit static list to selected_patients_regx  frame_list that is incoming. "If there is a mismatch what would happen?"
 			self.leftDockNew()
+			# self.leftDock()
 			self.reset.setEnabled(True)		
 			self.main_open.setEnabled(False)
 			self.openAction.setEnabled(False)
+			print("Process Complete")
 			try:
 				self.removeDockWidget(self.dock)
 			except:
@@ -743,6 +813,7 @@ class Application(QMainWindow):
 
 		while marker <= total_length:
 			self.qprogressbar.setValue(marker)
+			print("Processed: " + str(marker))
 			if marker == total_length:
 				break
 			else:
@@ -757,11 +828,31 @@ class Application(QMainWindow):
 		dialog.show()
 
 	def filelist(self, directory,selected):
+		# print("SELECTED : ")
+		# print(selected)
+		# try:
+		# 	filedir = QFileDialog.getExistingDirectory(self, "Select File(s)", directory)#'/home/yipeng/analysis')
+		# 	print(filedir)
+		# 	if filedir:
+		# 		filetuple = os.listdir(filedir)
+		# 		files = [filedir +'/'+ file for file in filetuple]
+		# 		self.statusBar().showMessage("Opened"+str(filedir))
+		# 	else:
+		# 		self.dialog = QDialog(QLabel('No file selected!'))
+		# 		self.dialog.exec_()
+		# 		return None
+		# except FileNotFoundError:
+		# 	self.no_file()	
+		
 		filedir = self.filedialog.getExistingDirectory(None, "Select File(s)", directory)   #'/home/yipeng/analysis')
 
 		if filedir != '':
 			filetuple = os.listdir(filedir)
+			# print("=====================")
+			# print(filetuple)
+			# print("=====================")
 			files = [filedir +'/'+ file for file in filetuple]
+			# self.statusBar().showMessage("Opened"+str(filedir))
 		else:
 			self.no_file()
 			return None			
@@ -777,6 +868,32 @@ class Application(QMainWindow):
 						self.selected_pattern.append(x)
 		except IndexError:
 			pass
+
+		# s = [[] for i in range(12)]	
+		# for i in range(len(files_selected_to_open)):
+		# 	files_selected_to_open[i]
+		# for i in patient:
+		# 	for x in files_selected_to_open:
+				
+		# s = [[] for i in range(12)]
+		# h=[0,12,24,36,48,60,72,84]
+		# l = self.static_list()
+		# f=[]
+		# for x in range(len(l)):
+		# 	for i in range(len(files)):
+		# 		if l[x] in files[i]:
+		# 			f.append(files[i])
+		# try:
+		# 	for i in range(8):
+		# 		for x in range(12):
+		# 			s[x].append(f[h[i]+x])
+		# except IndexError:
+		# 	pass
+	
+		# results = []
+		# for sublist in s:
+		# 	for item in sublist:
+		# 		results.append(item)
 		try :
 			not_selected_files = []
 			if len(selected) != len(self.files_selected_to_open):
@@ -804,15 +921,42 @@ class Application(QMainWindow):
 			self.scatterplot = sb.lmplot(x=self.header_list[1], y=self.header_list[0], hue = "Cluster", data = dataframe, fit_reg= False, scatter_kws={'s':5},legend = False)
 		except TypeError:
 			self.scatterplot = sb.lmplot(x=self.header_list[1], y=self.header_list[0], hue = "Cluster", data = original_frame, fit_reg= False, scatter_kws={'s':5},legend = False)			
+		# self.scatterplot.set_titles(graph_title_list[count%8])
 		self.scatterplot.fig.suptitle(labelname)
+		# if count < 80 :
+		# 	path_string =  Path(graph_title_list[count%8] +str(str(0) + str(count%8 + 1) + ".png"))
+		# 	cluster_path = Path(self.tempdir_path/path_string)
+		# 	self.scatterplot.savefig(str(cluster_path))
+		# else:
+		# 	path_string =  Path(graph_title_list[count%8] +str(str(1) + str(count%8 + 1) + ".png"))
+		# 	cluster_path = Path(self.tempdir_path/path_string)
+		# 	self.scatterplot.savefig(str(cluster_path))
 		if count < len(self.selected_pattern):
 			path_string =  Path(self.selected_pattern[count] +str(".png"))
 			cluster_path = Path(self.tempdir_path/path_string)
 			self.scatterplot.savefig(str(cluster_path))
 		else:
 			pass		
+		# print('=================')
+		# print('%r'%str(cluster_path))
+		# (tempFileLists.append(self.scatterplot.fig)
+		# print(type(self.scatterplot.fig))
+		# print(tempFileLists)
+		#self.scatterplot.fig.clear()
+
+		# return self.scatterplot.fig		
+
+	def return_counts(self, framelist):
+		counts = [None for i in range(len(framelist))]
+		for i in range(len(framelist)):
+			counts[i]= (framelist[i]['Cluster'].value_counts().tolist()) 
+			if counts[i] < 8000:
+				self.failed.append(i)
+				counts[i] = 0
+		return counts	
 
 	def run_checked(self):
+		#TODO add function to count for not selected
 		try:
 			cl = self.checked_list()
 			idlist = self.checked_frames(cl)
@@ -828,7 +972,12 @@ class Application(QMainWindow):
 				fl.append(a)
 			except KeyError:
 				self.key_error()
+		#Insert Calculations Here
+		#self.update_graph(framelist = fl, idlist = idlist)				
 		self.selected_frames = fl	
+		#self.selected_frames.insert(0,int(idlist[0][0]))
+		#self.main_export.setEnabled(True)
+		#self.export_dock_widget(pid)
 
 	def tempFileDir(self):
 		static_title_pattern = self.static_list_file_pattern()
@@ -843,6 +992,7 @@ class Application(QMainWindow):
 		try:
 			self.setWindowState(Qt.WindowMaximized)
 			self.dockwidget.close()
+			# self.setCentralWidget(0)
 			for i in self.checkboxtestList:
 				i.setStyleSheet("color: black")
 		except:
@@ -850,12 +1000,33 @@ class Application(QMainWindow):
 
 		tempFileLists = self.tempFileDir()
 
+		# for i in range(len(self.all_checkboxes_for_deselection)):
+		# 	for x in range(len(self.all_checkboxes_for_deselection[i][1])-1):
+		# 		self.all_checkboxes_for_deselection[i][1][x].setChecked(False)
 
+		# unselect_checkbox_list = []
+		# self.checkall(pid = patient, boolean = True)
+
+		# checkboxlist = [self.p1,self.p2,self.p3,self.p4,self.p5,self.p6,self.p7,self.p8,self.p9,self.p10,self.p11,self.p12]
+		# for i in self.failed:
+		# 	a = (i-(12*patient))
+		# 	if a <=7:
+		# 		unselect_checkbox_list.append(int(a))
+		# 	else:
+		# 		pass
+		# try:
+		# 	for i in unselect_checkbox_list:
+		# 		checkboxlist[patient][1][i].setChecked(False)
+		# except:
+		# 	pass		
+		# self.run_checked()
 		if patient < 10 :
 			staticTestList = ["A" + str(0) + str(patient) ,"B" +  str(0) + str(patient) ,"C" +  str(0) + str(patient) , "D" + str(0) + str(patient) ,"E" +  str(0) + str(patient) ,"F" +  str(0) + str(patient) ,"G" +  str(0) + str(patient), "H" + str(0) + str(patient) ]
 		else:
 			staticTestList = ["A" + str(patient) ,"B" +  str(patient) ,"C" +  str(patient) , "D" + str(patient) ,"E" +  str(patient) ,"F" +  str(patient) ,"G" +  str(patient), "H" + str(patient) ]
-
+		# print(staticTestList)
+		print("************selected_pattern******************")
+		print(self.selected_pattern)
 		selected_pattern_patient = []
 		for i in range(len(staticTestList)):
 			for x in self.selected_pattern:
@@ -867,194 +1038,125 @@ class Application(QMainWindow):
 				if re.search(x,staticTestList[i]):
 					self.checkboxtestList[i].setStyleSheet("color: red")
 					self.checkboxtestList[i].setChecked(False)
+				# i.setChecked(True)
+		# self.selected_pattern
+
+		# for i in self.failed:
+		# 	self.checkboxtestList[i].setStyleSheet("color: red")
 		tempFileToOpen = []
+		# for i in self.checkboxtestList:
+		# 	i.setChecked(True)
 		for i in selected_pattern_patient:
 			for x in tempFileLists:
 				if re.search(i,x):
 					tempFileToOpen.append(x)
-
-		#TODO need to check the dictionary to fetch which frame to grab. 
-
+		# print("TEMPFILE : ")
+		# print(tempFileToOpen)
 		if patient == 1:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list1 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list1) != 0:			
-					self.centralwidget(glist = self.graph_widget_list1, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			# else:
-			# 	selected = self.custom_select_frames(self.selected_pattern)
-			# 	self.graph_widget_list1 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-			# 	if len(self.graph_widget_list1) != 0:			
-			# 		self.centralwidget(glist = self.graph_widget_list1, size =  len(selected))
-			# 	else :
-			# 		self.no_file()
+			self.graph_widget_list1 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list1) != 0:			
+				self.centralwidget(glist = self.graph_widget_list1, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 			
 		if patient == 2:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list2 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list2) != 0:			
-					self.centralwidget(glist = self.graph_widget_list1, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list2 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list2) != 0:			
-					self.centralwidget(glist = self.graph_widget_list2, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list2 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list2) != 0:			
+				self.centralwidget(glist = self.graph_widget_list2, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 3:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list3 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list3) != 0:			
-					self.centralwidget(glist = self.graph_widget_list3, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list3 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list3) != 0:			
-					self.centralwidget(glist = self.graph_widget_list3, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list3 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list3) != 0:			
+				self.centralwidget(glist = self.graph_widget_list3, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 4:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list4 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list4) != 0:			
-					self.centralwidget(glist = self.graph_widget_list4, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list4 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list4) != 0:			
-					self.centralwidget(glist = self.graph_widget_list4, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list4 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list4) != 0:			
+				self.centralwidget(glist = self.graph_widget_list4, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 5:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list5 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list5) != 0:			
-					self.centralwidget(glist = self.graph_widget_list5, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list5 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list5) != 0:			
-					self.centralwidget(glist = self.graph_widget_list5, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list5 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list5) != 0:			
+				self.centralwidget(glist = self.graph_widget_list5, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 6:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list6 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list6) != 0:			
-					self.centralwidget(glist = self.graph_widget_list6, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list6 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list6) != 0:			
-					self.centralwidget(glist = self.graph_widget_list6, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list6 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list6) != 0:			
+				self.centralwidget(glist = self.graph_widget_list6, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 7:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list7 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list7) != 0:			
-					self.centralwidget(glist = self.graph_widget_list7, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list7 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list7) != 0:			
-					self.centralwidget(glist = self.graph_widget_list7, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list7 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list7) != 0:			
+				self.centralwidget(glist = self.graph_widget_list7, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 8:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list8 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list8) != 0:			
-					self.centralwidget(glist = self.graph_widget_list8, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list8 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list8) != 0:			
-					self.centralwidget(glist = self.graph_widget_list8, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list8 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list8) != 0:			
+				self.centralwidget(glist = self.graph_widget_list8, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 9:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list9 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list9) != 0:			
-					self.centralwidget(glist = self.graph_widget_list9, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list9 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list9) != 0:			
-					self.centralwidget(glist = self.graph_widget_list9, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list9 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list9) != 0:			
+				self.centralwidget(glist = self.graph_widget_list9, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 10:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list10 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list10) != 0:			
-					self.centralwidget(glist = self.graph_widget_list1, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list10 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list10) != 0:			
-					self.centralwidget(glist = self.graph_widget_list10, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list10 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list10) != 0:			
+				self.centralwidget(glist = self.graph_widget_list10, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 11:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list11 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list11) != 0:			
-					self.centralwidget(glist = self.graph_widget_list11, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list11 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list11) != 0:			
-					self.centralwidget(glist = self.graph_widget_list11, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list11 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list11) != 0:			
+				self.centralwidget(glist = self.graph_widget_list11, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 
 		if patient == 12:
-			if self.frequency_view_checkbox.isChecked == False:
-				self.graph_widget_list12 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
-				if len(self.graph_widget_list12) != 0:			
-					self.centralwidget(glist = self.graph_widget_list12, size =  len(tempFileToOpen))
-				else :
-					self.no_file()
-			else:
-				selected = self.custom_select_frames(self.selected_pattern)
-				self.graph_widget_list12 = [self.graphwidget_frequency_view(selected) for i in range(len(selected))]
-				if len(self.graph_widget_list12) != 0:			
-					self.centralwidget(glist = self.graph_widget_list12, size =  len(selected))
-				else :
-					self.no_file()
+			self.graph_widget_list12 = [self.graphwidget(tempFileToOpen[i],i,patient) for i in range(len(tempFileToOpen))]
+			if len(self.graph_widget_list12) != 0:			
+				self.centralwidget(glist = self.graph_widget_list12, size =  len(tempFileToOpen))
+			else :
+				self.no_file()
 		self.export_dock_widget(patient)
+
+	# def update_graph(self, framelist, idlist):
+	# 	try:
+	# 		self.dockwidget.hide()
+	# 	except:
+	# 		pass
+	# 	length = len(framelist)
+	# 	if length == 1:		
+	# 		figure = self.load_cluster_graph(dataframe = framelist[0])	
+	# 		g = self.graphwidget(figure)
+	# 		glist = [g]		
+	# 		self.centralwidget(glist = glist, size = 1)
+	# 	else:
+	# 		fl = []
+	# 		glist = []
+	# 		for i in range(length):
+	# 			figure = self.load_cluster_graph(dataframe = framelist[i])
+	# 			fl.append(figure)
+	# 			glist.append(self.graphwidget(fl[i]))
+	# 		self.centralwidget(glist = glist, size = length)
+
 
 	def checked_frames(self, cl,pid):
 		frames = []
@@ -1082,6 +1184,7 @@ class Application(QMainWindow):
 		self.uiWidget.close()
 
 	def save_file(self,patient):
+		# frames = [[] for i in range(12)]
 		p_labels = ['Name', 'Age','Doctor','Hospital', 'Gest. Age', 'Last Period', 'Weight', 'Gender', 'Date']
 		patient_data = patient.return_data()	
 		if patient_data == []:
@@ -1094,6 +1197,7 @@ class Application(QMainWindow):
 		countid = ['C21: ','C18: ','C13: ']
 		ratioid = ['R21/18: ','R21/13: ','R18/13: ']
 		zscoreid = ['Z21/18: ','Z21/13: ','Z18/13: ']	
+		# print(patient_data)
 
 		with open(save_name,'w') as output:
 			output.write("Report\n\n")
@@ -1105,6 +1209,7 @@ class Application(QMainWindow):
 				Z1 = int(patient_data[2][0])
 				Z2 = int(patient_data[2][1])
 				Z3 = int(patient_data[2][2])
+				# print(Z1,Z2,Z3)
 				if Z1 >= 3 and Z2 >=3:
 					output.write("Trisomy 21 HIGH RISK \n")
 				if Z1 <= -3 and Z3 >= 3:
@@ -1116,6 +1221,63 @@ class Application(QMainWindow):
 			except IndexError:
 				print('Z SCORE ERROR')
 			output.close()
+
+
+
+
+			# try:
+			# 	for i in range(len(patient_data[0])):
+			# 		output.write('Count '+ countid[i] + patient_data[0][i] + '\n')
+			# except IndexError:
+			# 	print('Count Error')					
+			# try:	
+			# 	for i in range(len(patient_data[1][0])):
+			# 		output.write('Ratio '+ratioid[i]+patient_data[1][0][i]+'\n')
+			# except IndexError:
+			# 	print('Ratio Error')		
+			# try:
+			# 	for i in range(len(patient_data[2])):
+			# 		output.write('Z Score '+zscoreid[i]+patient_data[2][i]+'\n')
+			# except IndexError:
+			# 	print('Z Score Error')	
+		#save_popup = SavePopup(self)
+		#save_popup.setGeometry(300,200,400,200)
+		#save_popup.show()		 
+		# try:
+		# 	for x in range(8):
+		# 		frames[0].append(self.fl[x])
+		# 		frames[1].append(self.fl[x+7])
+		# 		frames[2].append(self.fl[x+15])
+		# 		frames[3].append(self.fl[x+23])
+		# 		frames[4].append(self.fl[x+31])
+		# 		frames[5].append(self.fl[x+39])
+		# 		frames[6].append(self.fl[x+47])
+		# 		frames[7].append(self.fl[x+55])
+		# 		frames[8].append(self.fl[x+63])
+		# 		frames[9].append(self.fl[x+71])
+		# 		frames[10].append(self.fl[x+79])
+		# 		frames[11].append(self.fl[x+87])
+		# except IndexError:
+		# 	pass
+		# print(len(frames[8]))	
+		# failedlist = []
+
+		# for i in self.failed[::-1]:
+		# 	failedlist.append(list(i))
+		# frames_failed = []
+		# for i in range(len(failedlist)):
+		# 	if len(failedlist[i]) == 2:
+		# 		list_num = int(failedlist[i][0])
+		# 		frame_num = ord(failedlist[i][1])-65
+		# 		frames[list_num-1].pop(frame_num)
+		# 	if len(failedlist[i]) == 3:
+		# 		list_num = (int(failedlist[i][0])*10)+(int(failedlist[i][1]))
+		# 		frame_num = ord(failedlist[i][2])-65
+		# 		frames[list_num-1].pop(frame_num)
+
+
+
+
 
 	def combine_p_l (self):
 		self.patientlist = patientlist = self.static_patient()
@@ -1137,12 +1299,46 @@ class Application(QMainWindow):
 		if state == Qt.Checked:
 			self.sl.append(self)
 
-
-	def set_initial_widget_button_color_with_information(self, a):
-
-		if a.isChecked():
-			a.setStyleSheet('background-color: #808080')
-
+	# def checkall(self, pid, boolean):
+	# 	state = boolean
+	# 	if pid == 1:
+	# 		for i in range(8):
+	# 			self.p1[1][i].setChecked(state)
+	# 	elif pid == 2: 
+	# 		for i in range(8):
+	# 			self.p2[1][i].setChecked(state)			
+	# 	elif pid == 3:
+	# 		for i in range(8):
+	# 			self.p3[1][i].setChecked(state)	
+	# 	elif pid == 4:
+	# 		for i in range(8):
+	# 			self.p4[1][i].setChecked(state)	
+	# 	elif pid == 5:
+	# 		for i in range(8):
+	# 			self.p5[1][i].setChecked(state)	
+	# 	elif pid == 6:
+	# 		for i in range(8):
+	# 			self.p6[1][i].setChecked(state)	
+	# 	elif pid == 7:
+	# 		for i in range(8):
+	# 			self.p7[1][i].setChecked(state)	
+	# 	elif pid == 8:
+	# 		for i in range(8):
+	# 			self.p8[1][i].setChecked(state)	
+	# 	elif pid == 9:
+	# 		for i in range(8):
+	# 			self.p9[1][i].setChecked(state)	
+	# 	elif pid == 10:
+	# 		for i in range(8):
+	# 			self.p10[1][i].setChecked(state)	
+	# 	elif pid == 11:
+	# 		for i in range(8):
+	# 			self.p11[1][i].setChecked(state)	
+	# 	elif pid == 12:
+	# 		for i in range(8):
+	# 			self.p12[1][i].setChecked(state)	
+	# 	else:
+	# 		print("delete")
 
 	def update_patient(self,pid):
 		labels = ['name', 'age','doctor','hospital', 'ges', 'period', 'weight', 'gender', 'date']
@@ -1153,11 +1349,13 @@ class Application(QMainWindow):
 		inputs.append(date)
 		kwargs = dict(zip(labels,inputs))
 		self.patient_list[pid-1].updateValues(**kwargs)	
+		self.p_button[pid-1].setText(inputs[0])	
 		for i in range(len(self.ind_button[pid-1])):
 			self.ind_button[pid-1][i].setText(inputs[0]+' '+st.ascii_uppercase[i])
 			self.ind_button[pid-1][i].setStyleSheet("color: blue")
-		for i in self.ind_button[pid-1]:
-			self.set_initial_widget_button_color_with_information(i)
+		if pid == 12:
+			self.main_open.setEnabled(True)	
+			self.openAction.setEnabled(True)
 		self.rightdock.hide()	
 
 	def refresh_button_name(self, pid):
@@ -1204,6 +1402,55 @@ class Application(QMainWindow):
 		
 		return lists
 
+	# def static_patient(self):
+	# 	#TODO
+	# 	failed_checkbox_list = [[] for i in range(12)] #int(len(self.files)/8)
+	# 	failed_checkbox = self.failed #list is in [location(int),location(int),location(int)]
+	# 	if len(failed_checkbox) != 0:
+	# 		for i in range(len(failed_checkbox)):
+	# 			try:
+	# 				if failed_checkbox[i] <= 7:
+	# 					failed_checkbox_list[0].append(failed_checkbox[i])
+	# 				if failed_checkbox[i] <= 15 and failed_checkbox[i] >= 7:
+	# 					failed_checkbox_list[1].append(failed_checkbox[i]-8)
+	# 				if failed_checkbox[i] <= 23 and failed_checkbox[i] >= 15:
+	# 					failed_checkbox_list[2].append(failed_checkbox[i]-16)
+	# 				if failed_checkbox[i] <= 31 and failed_checkbox[i] >= 23:
+	# 					failed_checkbox_list[3].append(failed_checkbox[i]-24)
+	# 				if failed_checkbox[i] <= 39 and failed_checkbox[i] >= 31:
+	# 					failed_checkbox_list[4].append(failed_checkbox[i]-32)
+	# 				if failed_checkbox[i] <= 47 and failed_checkbox[i] >= 39:
+	# 					failed_checkbox_list[5].append(failed_checkbox[i]-40)
+	# 				if failed_checkbox[i] <= 55 and failed_checkbox[i] >= 47:
+	# 					failed_checkbox_list[6].append(failed_checkbox[i]-48)
+	# 				if failed_checkbox[i] <= 63 and failed_checkbox[i] >= 55:
+	# 					failed_checkbox_list[7].append(failed_checkbox[i]-56)
+	# 				if failed_checkbox[i] <= 71 and failed_checkbox[i] >= 63:
+	# 					failed_checkbox_list[8].append(failed_checkbox[i]-64)
+	# 				if failed_checkbox[i] <= 79 and failed_checkbox[i] >= 71:
+	# 					failed_checkbox_list[9].append(failed_checkbox[i]-72)
+	# 				if failed_checkbox[i] <= 87 and failed_checkbox[i] >= 79:
+	# 					failed_checkbox_list[10].append(failed_checkbox[i]-80)
+	# 				if failed_checkbox[i] <= 95 and failed_checkbox[i] >= 87:
+	# 					failed_checkbox_list[11].append(failed_checkbox[i]-88)
+	# 			except IndexError:
+	# 				pass
+	# 	self.p1 = p1 = self.checkboxwidget(pid = 1,failed = failed_checkbox_list[0])
+	# 	self.p2 = p2 = self.checkboxwidget(pid = 2,failed = failed_checkbox_list[1])
+	# 	self.p3 = p3 = self.checkboxwidget(pid = 3,failed = failed_checkbox_list[2])
+	# 	self.p4 = p4 = self.checkboxwidget(pid = 4,failed = failed_checkbox_list[3])
+	# 	self.p5 = p5 = self.checkboxwidget(pid = 5,failed = failed_checkbox_list[4])
+	# 	self.p6 = p6 = self.checkboxwidget(pid = 6,failed = failed_checkbox_list[5])
+	# 	self.p7 = p7 = self.checkboxwidget(pid = 7,failed = failed_checkbox_list[6])
+	# 	self.p8 = p8 = self.checkboxwidget(pid = 8,failed = failed_checkbox_list[7])
+	# 	self.p9 = p9 = self.checkboxwidget(pid = 9,failed = failed_checkbox_list[8])
+	# 	self.p10 = p10 = self.checkboxwidget(pid = 10,failed = failed_checkbox_list[9])
+	# 	self.p11 = p11 = self.checkboxwidget(pid = 11,failed = failed_checkbox_list[10])
+	# 	self.p12 = p12 = self.checkboxwidget(pid = 12,failed = failed_checkbox_list[11])
+	# 	patientlist = [p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12]
+	# 	self.all_checkboxes_for_deselection = [self.p1,self.p2,self.p3,self.p4,self.p5,self.p6,self.p7,self.p8,self.p9,self.p10,self.p11,self.p12]
+	# 	return patientlist
+
 	def static_labels(self):
 		widgetlist = []
 		formlist = []
@@ -1242,6 +1489,7 @@ class Application(QMainWindow):
 		for i in range(12):
 			widgetlist.append(QWidget())
 			formlist.append(QFormLayout())
+			#paitenttitlelist.append(QLabel("Paitient"+str(i+1),self))
 		for i in range(len(checkboxlist)):
 			formlist[i].addRow(checkboxlist[i])
 			widgetlist[i].setLayout(formlist[i])
@@ -1254,6 +1502,7 @@ class Application(QMainWindow):
 ###########################################################################################################################
 
 	def selected_counts(self, countlist):
+		#countlist format is [[F1],[F2],[F3],[F4],[F5],[F6],[F7],[F8]]
 		results = [[] for i in range(8)]		
 		for i in range(len(countlist)):
 			clusters = [[] for y in range(6)]		
@@ -1271,6 +1520,14 @@ class Application(QMainWindow):
 		c18 = (np.log(total)-(np.log(n18)))*total
 		c13 = (np.log(total)-(np.log(n1813)))*total
 		value_list = [c21, c18, c13]
+		print('value_list')
+		print(value_list)
+		print('total log')
+		print(str(np.log(total)))
+		print('n21 log')
+		print(str(np.log(n21)))
+		print('total')
+		print(str(total))
 		return value_list
 
 	def counts_of_c21c18c13(self,counts):
@@ -1300,7 +1557,7 @@ class Application(QMainWindow):
 		return ratios
 
 	def std_dev(self, values):
-		s = np.std(values)	
+		s = np.sqrt((2/(np.mean(sum(values)))))	
 		return s
 
 	def z_score(self, ratio, mean, stdv):
@@ -1309,20 +1566,21 @@ class Application(QMainWindow):
 		return z_score
 
 	def return_counts(self, framelist):
+		print(len(framelist))
 		counts = []
 		for i in range(len(framelist)):
 			counts.append([])
 		try:
 			for i in range(len(framelist)):
-				#TODO Sort the list of value counts to conform to the cluster sequence.
-				if len((framelist[i]['Cluster'].value_counts().tolist())) > 5 :
-					counts[i]= (framelist[i]['Cluster'].value_counts().tolist()) 
+				counts[i]= (framelist[i]['Cluster'].value_counts().tolist()) 
 		except:
 			pass
 		return counts		
 
 	def run_calculations_for_selected_frames(self,framelist):
 		counts_list = self.return_counts(framelist)
+		print('counts_list')		
+		print(counts_list)
 		patient_count_list = []
 		refactor_counts_list = []
 		ratio_list = []
@@ -1334,6 +1592,7 @@ class Application(QMainWindow):
 		try:
 			for i in range(len(counts_list)):
 				refactor_counts_list.append(self.value_calculation(counts_list[i]))
+			# total_fn_hn_list = self.value_calculation(refactor_counts_list)
 			patient_count_list = self.patient_count(refactor_counts_list)
 
 			ratio_list.append(self.ratio_calculation(patient_count_list))
@@ -1346,6 +1605,7 @@ class Application(QMainWindow):
 		return patient_count_list, ratio_list, z_score_list
 
 	def patient_count(self,counts_list):
+		print(counts_list)
 		c21 = []
 		c18 = []
 		c13 = []
@@ -1366,6 +1626,16 @@ class Application(QMainWindow):
 			counts, ratios, z_score = self.run_calculations_for_selected_frames(selected)
 			self.current_data = data = [counts,ratios,z_score]	
 			patient.set_data(self.current_data)
+
+
+	#def method1(self):
+	#	selected = self.selected
+	#	counts = []
+	#	ratios = []
+	#	z_score = []
+	#	counts,ratios,z_score = self.run_calculations_for_selected_frames(self.selected_frames)		
+	#	return ratios,result_z_scores
+
 
 ###########################################################################################################################
 #													Popups
@@ -1421,7 +1691,9 @@ class Application(QMainWindow):
 	def graph_popup(self, fig, size):
 		g = GraphPopup(self, fig, size)	
 		gsize = g.return_size()	
+		#g.setGeometry(300,200,gsize[0],gsize[1])
 		g.showMaximized()
+		#g.show()
 
 	def setting_popup(self, ratio):
 		s = RatioPopup(self, ratio)
@@ -1448,9 +1720,16 @@ class Application(QMainWindow):
 
 	def mean(self, l):
 		return sum(l)/len(l)
+
+##########################################################################################################################
+#WORKINPROGRESS
 		
 	def dictionary(self,framelist, staticlist):
+		print("lookhere")
+		print(framelist)
+		print(staticlist)
 		dictionary = dict(zip(staticlist,framelist))
+		print(dictionary)
 		return dictionary
 
 	def fullframe(self, framelist):
@@ -1467,15 +1746,20 @@ class Application(QMainWindow):
 		QCoreApplication.processEvents()
 		fl=[]
 		gl=[]
+		print("///////////////////////////")
+		print(self.files)
+		print("///////////////////////////")
 		for i in range(len(self.files)):
 			QCoreApplication.processEvents()
 			frame = self.single_frame(files = self.files[i])
+			# Look into passing back the i value 
 			print('========'+str(i)+'========')	
 			for x in self.selected_pattern:
 				if re.search(x,self.files[i]):
 					label = x
 			ds = self.run_analysis(frame = frame, label = label, marker = i)
 			gl.append(self.load_cluster_graph(ds,frame,label,i))
+			#(tempFileLists.append()
 			self.progress(i)
 			fl.append(ds)
  
@@ -1500,6 +1784,7 @@ class Application(QMainWindow):
 		fullframe = frame
 		fullframe[column] = (fullframe[column]/100).astype(int)	
 		frequency = fullframe.iloc[:,column_num].value_counts().sort_index(ascending = True)	
+		# print("*************frequency.index*************************")
 		# print(len(frequency.index))	
 		if len(frequency.index) > 150:
 			fullframe = frame
@@ -1507,16 +1792,14 @@ class Application(QMainWindow):
 			frequency = fullframe.iloc[:,column_num].value_counts().sort_index(ascending = True)
 		else:
 			pass
-
 		frequencylist = self.frequency_to_index(column_num,frequency)
 		return frequencylist
 
 	def sequential_values_y(self, frequencylist):
 		sequential_values = []		
-		print(frequencylist)
 		for i in range(len(frequencylist)-1):
 			if frequencylist[i+1] - frequencylist[i] > 10:
-				sequential_values.append(frequencylist[i]+1)
+				sequential_values.append(frequencylist[i-1]-1)
 		return sequential_values
 
 	def sequential_values_x(self, frequencylist):
@@ -1528,29 +1811,41 @@ class Application(QMainWindow):
 
 
 	def frequency_to_index(self,column_num,frequency):
-		ybins = [100,50,10,5,4,1]
+		ybins = [100,50,10,5,1]
 		xbins = [50,25,10,5,1]
+		# print(frequency)
 		bin_results = []	
 		if column_num == 0:
 			for i in range(len(ybins)):
 				sequential_list = self.sequential_values_y(list(frequency[frequency<ybins[i]].index))
+				# sequential_list = list(frequency[frequency<ybins[i]].index)
+				# print("****SequentialList*****" + str(i) + "*********************")
+				# print(sequential_list)
+				# print("**********************")
 				if len(sequential_list) == 2:
 					bin_results = sequential_list
-					
-					
 		elif column_num == 1:	
-			for i in range(len(xbins)):			
-				sequential_list = self.sequential_values_x(list(frequency[frequency>xbins[i]].index))
+			for i in range(len(ybins)):
+				# print("****FrequencyList*****" + str(i) + "*********************")
+				# print(frequency)
+				# print("**********************")				
+				sequential_list = self.sequential_values_x(list(frequency[frequency>xbins[i]].index))	
+				# sequential_list = list(frequency[frequency<xbins[i]].index)
 				if len(sequential_list) == 1:
 					bin_results = sequential_list
-					
+		# print("**********column_num************")
+		# print(column_num)
+		# print(frequency)
+		# print("**********************")
 		return bin_results
 
-	def bin_result_filter(self,bin_results):
-		return []
-
 	def cluster_configuration(self,values,frame,marker):
+		# print('=========================')
+		# print(values)
+		# print(marker)
+		# print('=========================')
 
+		#values format should be in [[df:y_values, len = 2][df:x1_values, len = 1][df:x1_values, len = 1][df:x1_values, len = 1]]
 		try:
 			y_values = values[0]
 			x1_values = values[1]
@@ -1560,7 +1855,10 @@ class Application(QMainWindow):
 			cond3 =((frame['Ch1 Amplitude'] >=((y_values[0]*100)-100))&(frame['Ch1 Amplitude'] < ((y_values[1]*100)-50)))&(frame['Ch2 Amplitude'] < ((x2_values[0]*100)-10))
 			cond5 =((frame['Ch1 Amplitude'] >= (((y_values[1]*100)-50))))&(frame['Ch2 Amplitude'] < ((x3_values[0]*100)-10))
 			cond2 =((frame['Ch1 Amplitude'] < ((y_values[0]*100)-50))&(frame['Ch2 Amplitude'] >= ((x1_values[0]*100))))
+			# cond2 =((frame['Ch1 Amplitude'] < ((y_values[0]*100)-50))&(frame['Ch2 Amplitude'] >= ((x1_values[0]*100)-100)))			
+			# cond4 =((frame['Ch1 Amplitude'] >= ((y_values[0]*100)-50))&(frame['Ch1 Amplitude'] < ((y_values[1]*100)-50))&(frame['Ch2 Amplitude'] >= ((x2_values[0]*100)-100)))
 			cond4 =((frame['Ch1 Amplitude'] >= ((y_values[0]*100)-50))&(frame['Ch1 Amplitude'] < ((y_values[1]*100)-50)))&(frame['Ch2 Amplitude'] >= (x2_values[0]*100))
+			# cond6 =((frame['Ch1 Amplitude'] >= ((y_values[1]*100)-50))&(frame['Ch2 Amplitude'] >= ((x3_values[0]*100)-50)))			
 			cond6 =((frame['Ch1 Amplitude'] >= ((y_values[1]*100)-50))&(frame['Ch2 Amplitude'] >= ((x3_values[0]*100))))
 			conditions = [cond1,cond2,cond3,cond4,cond5,cond6]
 			choices = [1,2,3,4,5,6]
@@ -1571,8 +1869,23 @@ class Application(QMainWindow):
 					frame = frame[frame.Cluster != 0]
 			except:
 				pass
-		except (TypeError,IndexError):
-			return frame
+			# a0 = frame[(frame['Cluster']==0)].count()
+			# a1 = frame[(frame['Cluster']==1)].count()
+			# a2 = frame[(frame['Cluster']==2)].count()
+			# a3 = frame[(frame['Cluster']==3)].count()
+			# a4 = frame[(frame['Cluster']==4)].count()
+			# a5 = frame[(frame['Cluster']==5)].count()
+			# a6 = frame[(frame['Cluster']==6)].count()
+			# a7 = frame.count()
+			# if a 7> 200:
+			# 	print("!!!!!!!!!!!!!")
+			# 	print(marker)
+			# 	print(a)
+			# 	time.sleep(1000000)
+			# frame = self.classifyZeroCluster(frame, values)
+		except TypeError:
+			# self.failed.append(marker)
+			return
 		return frame
 
 	def classifyZeroCluster(self, frame, values):
@@ -1587,7 +1900,7 @@ class Application(QMainWindow):
 					frame['Cluster'] == 4
 				else:
 					frame['Cluster'] == 3
-			else:  
+			else:   #5,6
 				if frame['Ch2 Amplitude'] >= values[3][0]*100:
 					frame['Cluster'] == 6
 				else:
@@ -1608,17 +1921,16 @@ class Application(QMainWindow):
 		try:
 			fullframe = frame.copy()
 			y_values = self.try_bins(frame = fullframe, axis = 'y')
-			y_values.sort()
 			x1_frame = fullframe[frame['Ch1 Amplitude']<=(y_values[0]*100)]
 			x2_frame = fullframe[(frame['Ch1 Amplitude']<(y_values[1]*100))&(frame['Ch1 Amplitude']>(y_values[0]*100))]		
 			x3_frame = fullframe[frame['Ch1 Amplitude']>=(y_values[1]*100)]		
-			x1_values = self.try_bins(frame = x1_frame, axis = 'x')				
-			x2_values = self.try_bins(frame = x2_frame, axis = 'x')		
-			x3_values = self.try_bins(frame = x3_frame, axis = 'x')			
+			x1_values = self.try_bins(frame = x1_frame, axis = 'x')
+			x2_values = self.try_bins(frame = x2_frame, axis = 'x')
+			x3_values = self.try_bins(frame = x3_frame, axis = 'x')	
 			values = [y_values,x1_values,x2_values,x3_values]
 		except (TypeError, IndexError):
 			self.failed.append(label)
-			return frame
+			return 
 		
 		return self.cluster_configuration(values = values, frame = frame, marker = marker)	
 
@@ -1686,15 +1998,20 @@ class Application(QMainWindow):
 		return failed		
 
 	def custom_select_frames(self,selected_pattern):
+		# try:
+		# cl, pid = self.checked_list(pid)
+		# idlist = self.checked_frames(cl, pid)
+		# # except:
+		# 	# pass
+		# print(idlist)
+		# idlist.pop(-1)
 		fl = []
-
 		for i in selected_pattern:
 			try:
 				a = self.dict[i]
 				fl.append(a)
 			except KeyError:
 				self.key_error()
-		# print(fl)
 		return fl	
 
 ###########################################################################################################################
@@ -1843,6 +2160,7 @@ class ErrorPopup(QDialog):
 	def body(self):
 		font = QFont()
 		font.setPointSize(16)
+		# font.setWeight(80)
 		label = QLabel(self.text,self)
 		label.setFont(font)
 		label.setAlignment(Qt.AlignCenter)
@@ -1873,6 +2191,7 @@ class ResultRatioPopup(QDialog):
 	def body(self):
 		font = QFont()
 		font.setPointSize(16)
+		# font.setWeight(80)
 		rounded_ratios = []
 		for i in range(len(self.ratio)):
 			rounded_ratios.append("{0:.2f}".format(i))
@@ -1904,8 +2223,10 @@ class ResultPopup(QDialog):
 	def body(self):
 		font = QFont()
 		font.setPointSize(16)
+		# font.setWeight(80)
 		layout = QGridLayout()
 		labels = ['Test Results','Counts 1','Counts 2','Counts 3','Ratios 1','Ratios 2','Ratios 3','Z-Score1', 'Z-Score2', 'Z-Score3']
+		print(self.data)
 		for i in range(len(labels)):
 			lbl = QLabel(labels[i])
 			lbl.setFont(font)
@@ -1950,6 +2271,7 @@ class AboutPopup(QDialog):
 	def about(self):
 		font = QFont()
 		font.setPointSize(16)
+		# font.setWeight(80)
 		layout = QGridLayout()
 		label_list = ['Phone Number:  ', 'Email:  ','Mailing Address:  ']
 		info_list = ['1-(650)-544-4516', 'info@Atliabiosystems.com', '740 Sierra Vista Ave, Suite E \n Mountain View, CA, 94043']
@@ -1972,6 +2294,7 @@ class GraphPopup(QDialog):
 		self.fig = fig	
 		width = float(size.width()/110)
 		height = float(size.height()/110)
+		print(width,height)
 		self.fig.set_size_inches(width,height)	
 		self.body()	
 
@@ -2006,6 +2329,7 @@ class RatioPopup(QDialog):
 		blayout = QVBoxLayout()	
 		font = QFont()
 		font.setPointSize(16)
+		# font.setWeight(80)		
 		label = QLabel('Please Insert Means')
 		label.setFont(font)
 		label.setAlignment(Qt.AlignHCenter)
@@ -2100,6 +2424,84 @@ class PostAnalysisPopup(QDialog):
 
 	def return_size(self):
 		return self.w, self.h
+
+# class AdminPopup(QDialog):
+# 	def __init__(self, parent = None, admin = None):
+# 		super().__init__(parent)
+# 		self.admin = admin
+# 		self.layout = QVBoxLayout()
+# 		self.setLayout(self.layout)		
+# 		self.body()
+
+# 	def body(self):
+# 		self.admin_label = QLabel('Admin Access Needed')
+# 		self.layout.addWidget(self.admin_label)
+# 		self.admin_label.setAlignment(Qt.AlignCenter)		
+# 		username = QWidget()
+# 		password = QWidget()
+# 		username_layout = QHBoxLayout()
+# 		password_layout = QHBoxLayout()
+# 		username_layout.addWidget(QLabel('Username'))
+# 		password_layout.addWidget(QLabel('Password'))
+# 		self.username_lineedit = QLineEdit('Please enter Username')
+# 		self.password_lineedit = QLineEdit('Please enter Password')
+# 		self.password_lineedit.setEchoMode(QLineEdit.Password)
+# 		username_layout.addWidget(self.username_lineedit)
+# 		password_layout.addWidget(self.password_lineedit)
+# 		username.setLayout(username_layout)
+# 		password.setLayout(password_layout)
+# 		v_layout = QVBoxLayout()		
+# 		v_layout.addWidget(username)
+# 		v_layout.addWidget(password)
+# 		self.v_widget = QWidget()
+# 		self.v_widget.setLayout(v_layout)
+# 		self.layout.addWidget(self.v_widget)
+# 		self.login_button = QPushButton('Login')
+# 		self.login_button.clicked.connect(self.login_check)
+# 		self.layout.addWidget(self.login_button)
+
+
+# 	def return_values(self):
+# 		username_string = self.username_lineedit.text() 
+# 		password_string = self.password_lineedit.text()
+# 		return username_string, password_string
+
+# 	def login_check(self):
+# 		iuser,ipw = self.return_values() #i = input
+# 		duser = self.admin.return_username() #d = default
+# 		dpw = self.admin.return_password()
+# 		while iuser == duser and ipw == dpw:
+# 			return self.edit_pw()
+# 		return self.invalid()
+
+# 	def edit_pw(self):
+# 		self.layout.removeWidget(self.admin_label)
+# 		self.layout.removeWidget(self.v_widget)
+# 		self.layout.removeWidget(self.login_button)		
+# 		password = QWidget()
+# 		password_layout = QHBoxLayout()		
+# 		password_layout.addWidget(QLabel('Password'))
+# 		new_password_lineedit = QLineEdit('Please enter Password')
+# 		password_layout.addWidget(new_password_lineedit)
+# 		password.setLayout(password_layout)
+# 		update_pw_button = QPushButton('Update')
+# 		v_layout = QVBoxLayout()
+# 		v_layout.addWidget(password)
+# 		v_layout.addWidget(update_pw_button)
+# 		v_widget = QWidget()
+# 		update_pw_button.clicked.connect(lambda: self.update_pw(new_password_lineedit.text()))
+# 		v_widget.setLayout(v_layout)
+# 		self.layout.addWidget(v_widget)
+
+# 	def update_pw(self,pw):
+# 		self.admin.updatePassword(pw)
+
+# 	def invalid(self):
+# 		self.close()		
+# 		e = ErrorPopup(text = 'Invalid Password')
+# 		e.setGeometry(300,200,400,200)
+# 		e.show()
+
 
 
 if __name__ == '__main__':
